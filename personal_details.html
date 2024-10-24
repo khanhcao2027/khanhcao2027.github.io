@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tax Filing Assistant</title>
+</head>
+<body>
+
+<form id="taxForm">
+  <label for="age">Age:</label>
+  <input type="number" id="age" name="age" required>
+
+  <label for="nationality">Nationality:</label>
+  <select id="nationality" name="nationality" required>
+    <option value="domestic">Domestic</option>
+    <option value="international">International</option>
+  </select>
+
+  <label for="workStatus">Did you work during the school year?</label>
+  <input type="radio" id="workYes" name="workStatus" value="yes"> Yes
+  <input type="radio" id="workNo" name="workStatus" value="no"> No
+
+  <label for="dependency">Are you a tax dependent?</label>
+  <input type="radio" id="dependentYes" name="dependency" value="yes"> Yes
+  <input type="radio" id="dependentNo" name="dependency" value="no"> No
+
+  <button type="submit">Submit</button>
+</form>
+
+<div id="result"></div>
+
+<script>
+document.getElementById('taxForm').addEventListener('submit', function(event) {
+    event.preventDefault();
+
+    // Collect form data
+    const age = document.getElementById('age').value;
+    const nationality = document.getElementById('nationality').value;
+    const workStatus = document.querySelector('input[name="workStatus"]:checked').value;
+    const dependency = document.querySelector('input[name="dependency"]:checked').value;
+
+    // Send data to the back-end API
+    fetch('/calculateTax', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+            age: age,
+            nationality: nationality,
+            workStatus: workStatus,
+            dependency: dependency
+        })
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Display the result from back-end
+        document.getElementById('result').innerText = data.guide;
+    })
+    .catch(error => console.error('Error:', error));
+});
+</script>
+
+</body>
+</html>
